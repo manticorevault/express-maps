@@ -1,0 +1,46 @@
+<h1> list of restaurants </h1>
+
+<div id="map-container"></div>
+
+{{#each restaurant}}
+    <h4>{{ name }}</h4>
+    <span> Latitude: {{ location.coordinates.[1] }} Longitude: {{ location.coordinates.[0] }}</span>
+{{/each}}
+
+
+<script>
+
+    const restaurants = {{{ json restaurants }}}
+
+    function initMap() {
+        console.log("Hello World")
+        const $mapContainer = document.getElementById("map-container");
+
+        const map = new window.google.maps.Map($mapContainer, {
+            center: { lat: 38.5, lng: -9.15},
+            zoom: 8
+        });
+
+        const marker = [];
+
+        for (let restaurant of restaurants) {
+            console.log(restaurant);
+            const marker = new window.google.maps.Marker({
+                map, 
+                position: {
+                    lat: restaurant.location.coordinates[1],
+                    lng: restaurant.location.coordinates[0]
+                }
+            });
+
+            marker.addListener("click", () => {
+                const endpoint = `/restaurant/${ restaurant._id }`;
+                window.location = endpoint;
+            });
+
+            marker.push(marker);
+        }
+    }
+</script>
+
+{{>mapscript}}
